@@ -123,6 +123,7 @@ public class BlackJack {
     System.out.println("Dealer's card: " + card1);
     return card1.getValue();
   }
+  
   private static int playerTurn(Scanner scanner, int playerTotal, boolean hasAce) {
     while (true) {
       System.out.println("Your total is " + playerTotal + ". Do you want to hit or stand?");
