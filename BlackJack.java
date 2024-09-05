@@ -1,3 +1,8 @@
+// Andres Garcia
+// Adam Lopes
+// Samantha Castillo
+// 5 September 2024
+
 import java.util.Random;
 import java.util.Scanner;
 
@@ -17,7 +22,7 @@ public class BlackJack {
     //for (int i = 0; i < turn; i++) {
     while(turn) {
       initializeDeck();
-      //shuffleDeck();
+      shuffleDeck(); // shuffles the deck
       int playerTotal = 0;
       int dealerTotal = 0;
       playerTotal = dealInitialPlayerCards();
@@ -26,7 +31,7 @@ public class BlackJack {
       dealerTotal = dealInitialDealerCards();
 
       //fix playerTurn
-      playerTotal = playerTurn(scanner, playerTotal);
+      playerTotal = playerTurn(scanner, playerTotal, turn);
       if (playerTotal > 21) {
         System.out.println("You busted! Dealer wins.");
         return;
@@ -62,9 +67,15 @@ public class BlackJack {
       //DECK[i] = i;
       //public Card(int value, String suit, String rank) {
       int val = 10;
-      if(rankIndex < 9)
+      if(rankIndex < 9){
         val = Integer.parseInt(RANKS[rankIndex]);
+      }
       
+      // sets the value of theAce to 11
+      if(RANKS[rankIndex].equals("Ace")){        // sets the value of aces at 11
+        val = 11;
+      }
+    
       cards[i] = new Card( val, SUITS[suitIndex], RANKS[rankIndex]);
       suitIndex++;
       if (suitIndex == 4) {
@@ -73,6 +84,8 @@ public class BlackJack {
       }
     }
   }
+ 
+  
   // algorithm to shuffle deck
   private static void shuffleDeck() {
     Random random = new Random();
@@ -89,6 +102,13 @@ public class BlackJack {
     int card2 = dealCard();*/
     Card card1 = dealCard();
     Card card2 = dealCard();
+    int playerTotal = card1.getValue() + card2.getValue();
+    boolean hasAce = card1.getRank().equals("Ace") || card2.getRank().equals("Ace");
+
+    // Adjust for Ace if total is over 21
+    if (playerTotal > 21 && hasAce) {
+      playerTotal -= 10; // Ace is worth 1 instead of 11
+    }
     
     //System.out.println("Your cards: " + RANKS[card1] + " of " + SUITS[card1 / 13] + " and " + RANKS[card2] + " of " + SUITS[card2 / 13]);
     System.out.println("Your cards: " + card1.getRank() + " of " + card1.getSuit() + " and " + card2.getRank() + " of " + card2.getSuit());
@@ -103,7 +123,8 @@ public class BlackJack {
     System.out.println("Dealer's card: " + card1);
     return card1.getValue();
   }
-  private static int playerTurn(Scanner scanner, int playerTotal) {
+  
+  private static int playerTurn(Scanner scanner, int playerTotal, boolean hasAce) {
     while (true) {
       System.out.println("Your total is " + playerTotal + ". Do you want to hit or stand?");
       String action = scanner.nextLine().toLowerCase();
@@ -111,6 +132,10 @@ public class BlackJack {
         Card newCard = dealCard();
         playerTotal += newCard.getValue();
         System.out.println("You drew a " + newCard );
+        if (playerTotal > 21 && hasAce) {
+          playerTotal -= 10; // Ace is worth 1 instead of 11
+          hasAce = false; // Ace is now worth 1
+      }
         if (playerTotal > 21) {
           //added
           //resets playerTotal so the game can be played multiple times
@@ -151,6 +176,7 @@ public class BlackJack {
   private static Card dealCard() {
     //return DECK[currentCardIndex++] % 13;
     return cards[currentCardIndex++];
+
   }
   // algorithm to determine card value
   private static int cardValue(int card) {
